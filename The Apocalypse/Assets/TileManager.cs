@@ -9,8 +9,8 @@ public class TileManager : MonoBehaviour {
     public int tileSize;    
     [SerializeField]
     private Transform player;
-    private Dictionary<Vector2, GameObject> tileSet = new Dictionary<Vector2, GameObject>();
-    private readonly Queue<Vector2> tileQueue = new Queue<Vector2>();
+    private Dictionary<Vector2, GameObject> tileSet = new Dictionary<Vector2, GameObject>();    //The set which holds key,value pairs
+    private readonly Queue<Vector2> tileQueue = new Queue<Vector2>();                           //The validation queue
     public GameObject tilePrefab;
     // Use this for initialization
     void Start () {
@@ -33,7 +33,6 @@ public class TileManager : MonoBehaviour {
         {
             if(player.position.x > 0)
                 playerTile.x = (((int)((player.position.x + (tileSize / 2)) / tileSize)) * tileSize);
-
             else
             {
                 playerTile.x = (((int)((player.position.x - (tileSize / 2)) / tileSize)) * tileSize);
@@ -53,30 +52,22 @@ public class TileManager : MonoBehaviour {
                     pos = new Vector2(playerTile.x + i*tileSize, playerTile.y + j*tileSize);
                     if (!tileSet.ContainsKey(pos))
                     {
-
-                        tileSet.Add(pos, Instantiate(tilePrefab, new Vector3(pos.x, 0, pos.y), Quaternion.identity));
-                        tileQueue.Enqueue(pos);
+                        StartCoroutine("SpawnTile",pos);
                     }
                     pos = new Vector2(playerTile.x - i * tileSize, playerTile.y - j * tileSize);
                     if (!tileSet.ContainsKey(pos))
                     {
-
-                        tileSet.Add(pos, Instantiate(tilePrefab, new Vector3(pos.x, 0, pos.y), Quaternion.identity));
-                        tileQueue.Enqueue(pos);
+                        StartCoroutine("SpawnTile", pos);
                     }
                     pos = new Vector2(playerTile.x - i * tileSize, playerTile.y + j * tileSize);
                     if (!tileSet.ContainsKey(pos))
                     {
-
-                        tileSet.Add(pos, Instantiate(tilePrefab, new Vector3(pos.x, 0, pos.y), Quaternion.identity));
-                        tileQueue.Enqueue(pos);
+                        StartCoroutine("SpawnTile", pos);
                     }
                     pos = new Vector2(playerTile.x + i * tileSize, playerTile.y - j * tileSize);
                     if (!tileSet.ContainsKey(pos))
                     {
-
-                        tileSet.Add(pos, Instantiate(tilePrefab, new Vector3(pos.x, 0, pos.y), Quaternion.identity));
-                        tileQueue.Enqueue(pos);
+                        StartCoroutine("SpawnTile", pos);
                     }
                 }
             }
@@ -87,6 +78,8 @@ public class TileManager : MonoBehaviour {
 
     private IEnumerator SpawnTile(Vector2 position)
     {
+        tileSet.Add(position, Instantiate(tilePrefab, new Vector3(position.x, 0, position.y), Quaternion.identity));
+        tileQueue.Enqueue(position);
         yield break;
     }
     private IEnumerator RemoveTile(Vector2 position)
